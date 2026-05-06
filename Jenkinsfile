@@ -33,7 +33,7 @@ pipeline{
         stage('Test') {
             steps {
                 echo 'Testing ...'
-                sh 'phpu artisan test'
+                sh 'php artisan test'
             }
         }
         stage('Deploy') {
