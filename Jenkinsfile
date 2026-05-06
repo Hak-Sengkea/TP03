@@ -46,8 +46,8 @@ pipeline{
     post {
     failure {
         sh '''
-        curl -s -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage" \
-          -d chat_id="YOUR_CHAT_ID" \
+        curl -s -X POST "https://api.telegram.org/bot8234224472:AAEWA9BResJ5m9EFTSU0UiTNYuav21Tdu5s/sendMessage" \
+          -d chat_id="1020762915" \
           -d text="❌ Jenkins build failed
 
 Job: ${JOB_NAME}
@@ -58,8 +58,8 @@ URL: ${BUILD_URL}"
 
     success {
         sh '''
-        curl -s -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage" \
-          -d chat_id="YOUR_CHAT_ID" \
+        curl -s -X POST "https://api.telegram.org/bot8234224472:AAEWA9BResJ5m9EFTSU0UiTNYuav21Tdu5s/sendMessage" \
+          -d chat_id="1020762915" \
           -d text="✅ Jenkins build successful
 
 Job: ${JOB_NAME}
