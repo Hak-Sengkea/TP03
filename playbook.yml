@@ -1,0 +1,71 @@
+---
+- name: Deploy Laravel project
+  hosts: web
+  become: yes
+
+  vars:
+    app_dir: /var/www/haksengkea
+
+  tasks:
+    - name: Install server dependencies
+      apt:
+        name:
+          - git
+          - unzip
+          - curl
+          - nginx
+          - php-cli
+          - php-xml
+          - php-mbstring
+          - php-curl
+          - php-zip
+          - php-sqlite3
+          - npm
+          - composer
+        state: present
+        update_cache: yes
+
+    - name: Create app directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: "0755"
+
+    - name: Copy project files to server
+      synchronize:
+        src: "./"
+        dest: "{{ app_dir }}/"
+        delete: yes
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=node_modules"
+          - "--exclude=vendor"
+
+    - name: Install composer dependencies on server
+      command: composer install --no-dev --optimize-autoloader
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Copy env file if missing
+      command: cp .env.example .env
+      args:
+        chdir: "{{ app_dir }}"
+        creates: "{{ app_dir }}/.env"
+
+    - name: Generate app key
+      command: php artisan key:generate --force
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Set Laravel permissions
+      file:
+        path: "{{ app_dir }}/{{ item }}"
+        owner: www-data
+        group: www-data
+        mode: "0775"
+        recurse: yes
+      loop:
+        - storage
+        - bootstrap/cache
